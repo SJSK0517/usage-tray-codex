@@ -73,7 +73,8 @@ try {
     Invoke-Gh release create $Tag --repo $Repository --target main --draft --title "Usage Tray $($Tag -replace '^usage-tray-', '')" --notes-file RELEASE-NOTES.md
     $paths = @($names | ForEach-Object { Join-Path $cache $_ })
     Invoke-Gh release upload $Tag @paths --repo $Repository
-    $uploaded = Invoke-Gh api "repos/$Repository/releases/tags/$Tag" | ConvertFrom-Json
+    $uploaded = @(Invoke-Gh api "repos/$Repository/releases?per_page=100" | ConvertFrom-Json) | Where-Object tag_name -eq $Tag
+    if (@($uploaded).Count -ne 1) { throw 'Could not identify the draft release.' }
     foreach ($name in $names) {
         $asset = $uploaded.assets | Where-Object name -eq $name
         $local = Join-Path $cache $name
