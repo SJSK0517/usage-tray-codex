@@ -4,3 +4,7 @@
 *.sha256
 SHA256SUMS.txt
 
+
+.release-parts/
+.release-import.json
+/dist/

@@ -1,10 +1,8 @@
-"""Import only the five approved assets from short-lived download links."""
+"""Restore only the five approved assets from temporary binary transfer parts."""
 import hashlib
 import json
 import re
 import sys
-import urllib.parse
-import urllib.request
 from pathlib import Path
 
 
@@ -21,25 +19,23 @@ def main():
     destination = Path('dist')
     destination.mkdir()
     for item in supplied:
-        name, url = item['name'], item['url']
+        name, parts = item['name'], item['parts']
         approved = required[name]
-        if Path(name).name != name:
-            raise ValueError('Invalid asset name')
-        def allowed(value):
-            parsed = urllib.parse.urlsplit(value)
-            return parsed.scheme == 'https' and parsed.hostname in {'release-assets.githubusercontent.com', 'objects.githubusercontent.com'} and not parsed.username and not parsed.password
-        if not allowed(url):
-            raise ValueError('Download must use GitHub release asset storage')
+        if Path(name).name != name or not parts or len(parts) > 8 or len(set(parts)) != len(parts):
+            raise ValueError('Invalid asset or part list')
         digest, total = hashlib.sha256(), 0
-        with urllib.request.urlopen(url, timeout=120) as response, (destination / name).open('wb') as output:
-            if not allowed(response.geturl()):
-                raise ValueError('Unexpected download redirect')
-            while chunk := response.read(1024 * 1024):
-                total += len(chunk)
-                if total > approved['size']:
-                    raise ValueError('Asset exceeds approved size')
-                digest.update(chunk)
-                output.write(chunk)
+        with (destination / name).open('wb') as output:
+            for part in parts:
+                path = Path(part)
+                if path.is_symlink() or path.parent != Path('.release-parts') or not path.is_file():
+                    raise ValueError('Invalid transfer part')
+                with path.open('rb') as source:
+                    while chunk := source.read(1024 * 1024):
+                        total += len(chunk)
+                        if total > approved['size']:
+                            raise ValueError('Asset exceeds approved size')
+                        digest.update(chunk)
+                        output.write(chunk)
         if total != approved['size'] or digest.hexdigest() != approved['sha256']:
             raise ValueError('Asset size or SHA-256 mismatch: ' + name)
         print('Verified ' + name)
@@ -54,6 +50,6 @@ if __name__ == '__main__':
     try:
         main()
     except Exception as error:
-        # Keep short-lived download URLs out of public error logs.
-        print('Release import failed: ' + type(error).__name__, file=sys.stderr)
+        # Report the failure without printing installer contents.
+        print('Release import failed: ' + type(error).__name__ + ': ' + str(error), file=sys.stderr)
         sys.exit(1)
