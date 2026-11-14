@@ -1,0 +1,45 @@
+name: Import verified release
+on:
+  push:
+    branches: ['import/**']
+    paths: ['.release-import.json']
+permissions:
+  contents: write
+concurrency:
+  group: release-import
+  cancel-in-progress: false
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download and verify the approved installers
+        run: python3 scripts/import-release.py
+      - name: Create and upload a draft release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          tag="$(cat release-tag.txt)"
+          gh release create "$tag" --repo "$GITHUB_REPOSITORY" --target main --draft --title "Usage Tray ${tag#usage-tray-}" --notes-file RELEASE-NOTES.md
+          gh release upload "$tag" dist/* --repo "$GITHUB_REPOSITORY"
+      - name: Verify uploaded assets before publishing
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          tag="$(cat release-tag.txt)"
+          gh api "repos/$GITHUB_REPOSITORY/releases/tags/$tag" > uploaded.json
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          tag = Path('release-tag.txt').read_text()
+          expected = json.loads(Path('release-manifests', tag + '.json').read_text())
+          uploaded = json.loads(Path('uploaded.json').read_text())
+          assets = {item['name']: item for item in uploaded['assets']}
+          assert len(assets) == len(expected['assets']), 'Unexpected uploaded asset count'
+          for item in expected['assets']:
+              asset = assets[item['name']]
+              assert asset['size'] == item['size'], 'Uploaded size mismatch'
+              assert asset['digest'] == 'sha256:' + item['sha256'], 'Uploaded checksum mismatch'
+          print('All uploaded assets match the verified source release')
+          PY
+          gh release edit "$tag" --repo "$GITHUB_REPOSITORY" --draft=false --latest
