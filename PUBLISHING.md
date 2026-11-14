@@ -34,4 +34,4 @@ powershell -ExecutionPolicy Bypass -File .\scripts\Publish-Distribution.ps1 -Tag
 
 ## 검증된 릴리즈 가져오기
 
-초기 v1.4.5 설치파일은 비공개 개발 저장소의 정식 릴리즈에서 그대로 복사했으며 `release-manifests/`에 기록한 SHA-256과 일치합니다. GitHub Actions의 가져오기 작업은 임시 `import/` 브랜치의 파일 목록을 읽고 내려받은 파일의 크기·SHA-256과 업로드 결과를 검증한 뒤 릴리즈를 게시합니다. 앱 소스나 GitHub 인증 토큰은 이 저장소로 옮기지 않습니다.
+초기 v1.4.5 설치파일은 비공개 개발 저장소의 정식 릴리즈에서 그대로 복사했으며 `release-manifests/`에 기록한 SHA-256과 일치합니다. GitHub Actions의 가져오기 작업은 임시 `import/` 브랜치의 분할 파일을 원래 설치파일로 복원하고 크기·SHA-256과 업로드 결과를 검증한 뒤 릴리즈를 게시합니다. 앱 소스나 GitHub 인증 토큰은 이 저장소로 옮기지 않습니다.
