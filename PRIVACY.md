@@ -11,6 +11,12 @@ git config --local user.email 108185213+SJSK0517@users.noreply.github.com
 
 다른 기여자는 자신의 GitHub 아이디와 GitHub가 제공하는 noreply 이메일을 사용하세요. GitHub 계정의 이메일 설정에서도 이메일 비공개 및 개인 이메일이 노출되는 명령줄 push 차단을 설정할 수 있습니다.
 
+Python 3가 설치된 작업 폴더에서 다음 설정을 하면 push 전에 자동 검사합니다.
+
+```sh
+git config --local core.hooksPath scripts/git-hooks
+```
+
 push 전에는 다음 검사를 실행합니다.
 
 ```sh

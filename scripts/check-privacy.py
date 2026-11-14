@@ -16,10 +16,13 @@ def private_email(value):
 def main():
     ref = sys.argv[1] if len(sys.argv) > 1 else 'HEAD'
     findings = []
-    for row in git('log', ref, '--format=%H%x09%ae%x09%ce').decode().splitlines():
-        sha, author, committer = row.split('\t')
+    for row in git('log', ref, '--format=%H%x09%an%x09%ae%x09%cn%x09%ce').decode().splitlines():
+        sha, author_name, author, committer_name, committer = row.split('\t')
         if private_email(author) or private_email(committer):
             findings.append('Non-private commit identity: ' + sha[:10])
+        for name, email in [(author_name, author), (committer_name, committer)]:
+            if email in {'SJSK0517@users.noreply.github.com', '108185213+SJSK0517@users.noreply.github.com'} and name not in {'SJSK0517', 'Shane'}:
+                findings.append('Unexpected owner identity name: ' + sha[:10])
     tokens = re.compile(rb'(?:gh[pousr]_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,}|sk-(?:proj-)?[A-Za-z0-9_-]{20,}|-----BEGIN [A-Z ]*PRIVATE KEY-----)')
     emails = re.compile(rb'[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}')
     for path in git('ls-tree', '-r', '--name-only', '-z', ref).decode().split('\0'):
