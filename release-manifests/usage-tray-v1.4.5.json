@@ -1,0 +1,31 @@
+{
+  "tag": "usage-tray-v1.4.5",
+  "version": "1.4.5",
+  "assets": [
+    {
+      "name": "SHA256SUMS.txt",
+      "size": 192,
+      "sha256": "e290be42c17cacea912560a84ad27a4a3d7b427f98f59ae54cdc0740631e32c1"
+    },
+    {
+      "name": "UsageTray-Setup-win-arm64.exe",
+      "size": 158781298,
+      "sha256": "e80f44ba9961445763bdd3f84bbbcde27450affedc9230c5b948c7ef303a0e34"
+    },
+    {
+      "name": "UsageTray-Setup-win-arm64.exe.sha256",
+      "size": 97,
+      "sha256": "58a880e04c23915ca595075808157a5d9fb904362141354de4196427c512d53a"
+    },
+    {
+      "name": "UsageTray-Setup-win-x64.exe",
+      "size": 180238227,
+      "sha256": "a2a7ccd493942016be983a6b88f450f0dcc5df41b5e380f46d2f19988fd0fb14"
+    },
+    {
+      "name": "UsageTray-Setup-win-x64.exe.sha256",
+      "size": 95,
+      "sha256": "ef3e54f09c6a161a17a869173744c78b5e04628c6650c17795df9664595b4b9f"
+    }
+  ]
+}
