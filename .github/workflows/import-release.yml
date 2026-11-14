@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Download and verify the approved installers
+      - name: Restore and verify the approved installers
         run: python3 scripts/import-release.py
       - name: Create and upload a draft release
         env:
