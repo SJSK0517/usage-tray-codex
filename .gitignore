@@ -8,3 +8,17 @@ SHA256SUMS.txt
 .release-parts/
 .release-import.json
 /dist/
+
+# User credentials and local account data must never be distributed.
+.env
+.env.*
+!.env.example
+.codex/
+auth.json
+credentials.json
+settings.json
+*.pem
+*.key
+*.pfx
+*.p12
+__pycache__/

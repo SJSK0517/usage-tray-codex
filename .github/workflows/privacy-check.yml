@@ -1,0 +1,12 @@
+name: Check public distribution privacy
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  privacy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - run: python3 scripts/check-privacy.py HEAD
