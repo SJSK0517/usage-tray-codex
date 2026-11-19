@@ -3,7 +3,7 @@
 </p>
 
 <h1 align="center">Usage Tray</h1>
-<p align="center">Work · Codex의 공유 플랜 사용량을 Windows 작업표시줄에서 확인하세요.</p>
+<p align="center">Work · Codex의 플랜 사용량을 Windows 작업표시줄에서 확인하세요.</p>
 <p align="center">
   <img alt="Windows 11" src="https://img.shields.io/badge/Windows-11-0078D4">
   <img alt="버전 1.4.5" src="https://img.shields.io/badge/version-1.4.5-74DAB5">
